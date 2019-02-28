@@ -31,55 +31,60 @@
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">
+                            <a class="nav-link active" href="usuarios.php">
                                 <span data-feather="home"></span>
                                 Usuarios <span class="sr-only">(current)</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="file"></span>
-                                Orders
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="shopping-cart"></span>
-                                Products
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="users"></span>
-                                Customers
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2"></span>
-                                Reports
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="layers"></span>
-                                Integrations
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+              <a class="nav-link" href="#">
+                <span data-feather="file"></span>
+                Main
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file"></span>
+                Features
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="shopping-cart"></span>
+                Works
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="users"></span>
+                OurTeam
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="bar-chart-2"></span>
+                Testimonials
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="layers"></span>
+                Downloads
+              </a>
+            </li>
+        </div>
+      </nav>
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" id="main">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Usuarios</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group mr-2">
-                            <button type="button" class="btn btn-sm btn-outline-danger cancelar">Cancelar</button>
-                            <button type="button" class="btn btn-sm btn-outline-success" id="nuevo_registro">Nuevo</button>
-                        </div>
-                    </div>
-                </div>
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Dashboard</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button type="button" class="btn btn-sm btn-outline-danger cancelar">Cancelar</button>
+              <button type="button" class="btn btn-sm btn-outline-success" id="nuevo_registro">Nuevo</button>
+            </div>
+          </div>
+        </div>
                 <h2>Consultar Usuarios</h2>
                 <div class="table-responsive view" id="show_data">
                     <table class="table table-striped table-sm" id="list-usuarios">
@@ -136,7 +141,7 @@
 
     <script>
         function change_view(vista = 'show_data') {
-            $("#main").find(".view").each(function () {
+            $("#main").find(".view").each(function() {
                 // $(this).addClass("d-none");
                 $(this).slideUp('fast');
                 let id = $(this).attr("id");
@@ -146,21 +151,22 @@
                 }
             });
         }
+
         function consultar() {
             let obj = {
                 "accion": "consultar_usuarios"
             };
-            $.post("includes/_funciones.php", obj, function (respuesta) {
+            $.post("includes/_funciones.php", obj, function(respuesta) {
                 let template = ``;
-                $.each(respuesta, function (i, e) {
+                $.each(respuesta, function(i, e) {
                     template +=
                         `
           <tr>
           <td>${e.usr_nombre}</td>
           <td>${e.usr_telefono}</td>
           <td>
-          <a href="#" data-id="${e.id}">Editar</a>
-          <a href="#" data-id="${e.id}">Eliminar</a>
+          <a href="#" data-id="${e.id_usr}" class="editar_registro">Editar</a>
+          <a href="#" data-id="${e.id_usr}" class="eliminar_registro">Eliminar</a>
           </td>
           </tr>
           `;
@@ -168,26 +174,26 @@
                 $("#list-usuarios tbody").html(template);
             }, "JSON");
         }
-        $(document).ready(function () {
+        $(document).ready(function() {
             consultar();
             change_view();
         });
-        $("#nuevo_registro").click(function () {
+        $("#nuevo_registro").click(function() {
             change_view('insert_data');
         });
-        $("#guardar_datos").click(function () {
+        $("#guardar_datos").click(function() {
             let usr_nombre = $("#inputNombre").val();
             let usr_correo = $("#inputCorreo").val();
             let usr_telefono = $("#inputTelefono").val();
             let usr_password = $("#inputPassword").val();
             let obj = {
                 "accion": "insertar_usuario",
-                "nombre" :  usr_nombre,
-                "mail" : usr_correo,
-                "tel" : usr_telefono,
-                "pass" : usr_password
+                "nombre": usr_nombre,
+                "mail": usr_correo,
+                "tel": usr_telefono,
+                "pass": usr_password
             }
-            $("#form_data").find("input").each(function () {
+            $("#form_data").find("input").each(function() {
                 $(this).removeClass("has-error");
                 if ($(this).val() != "") {
                     obj[$(this).prop("name")] = $(this).val();
@@ -196,18 +202,19 @@
                     return false;
                 }
             });
-            $.post("includes/_funciones.php", obj, function (r) {
+            $.post("includes/_funciones.php", obj, function(r) {
                 if (r == 0) {
-                  $("#error").html("Campos vacios").fadeIn();
-                }if (r == 1) {
+                    $("#error").html("Campos vacios").fadeIn();
+                }
+                if (r == 1) {
                     location.reload();
                 }
             });
         });
-        $("#main").find(".cancelar").click(function () {
+        $("#main").find(".cancelar").click(function() {
             change_view();
             $("#form_data")[0].reset();
-            $("#form_data").find("input").each(function () {
+            $("#form_data").find("input").each(function() {
                 $(this).removeClass("has-error");
             });
             $("#error").hide();
@@ -216,4 +223,4 @@
     </script>
 </body>
 
-</html>
+</html> 
