@@ -37,54 +37,30 @@
                             </a>
                         </li>
                         <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file"></span>
-                Main
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file"></span>
-                Features
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="shopping-cart"></span>
-                Works
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="users"></span>
-                OurTeam
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="bar-chart-2"></span>
-                Testimonials
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="layers"></span>
-                Downloads
-              </a>
-            </li>
-        </div>
-      </nav>
+                            <a class="nav-link" href="download.php">
+                                <span data-feather="file"></span>
+                                Download
+                              <li class="nav-item">
+                            <a class="nav-link" href="works.php">
+                                <span data-feather="file"></span>
+                               works
+
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" id="main">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 class="h2">Dashboard</h1>
-          <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2">
-              <button type="button" class="btn btn-sm btn-outline-danger cancelar">Cancelar</button>
-              <button type="button" class="btn btn-sm btn-outline-success" id="nuevo_registro">Nuevo</button>
-            </div>
-          </div>
-        </div>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Usuarios</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group mr-2">
+                            <button type="button" class="btn btn-sm btn-outline-danger cancelar">Cancelar</button>
+                            <button type="button" class="btn btn-sm btn-outline-success" id="nuevo_registro">Nuevo</button>
+                        </div>
+                    </div>
+                </div>
                 <h2>Consultar Usuarios</h2>
                 <div class="table-responsive view" id="show_data">
                     <table class="table table-striped table-sm" id="list-usuarios">
@@ -99,26 +75,31 @@
                     </table>
                 </div>
                 <div id="insert_data" class="view">
-                    <form action="#" id="form_data">
+                    <form action="#" id="form_data" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
                                     <label for="nombre">Nombre</label>
-                                    <input type="text" id="inputNombre" name="nombre" class="form-control">
+                                    <input type="text" id="nombre" name="nombre" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label for="correo">Correo Electrónico</label>
-                                    <input type="email" id="inputCorreo" name="correo" class="form-control">
+                                    <input type="email" id="correo" name="correo" class="form-control">
                                 </div>
+                                <div class="form-group">
+                                    <input type="file" name="foto" id="foto">
+                                    <input type="hidden" name="ruta" id="ruta" readonly="readonly">
+                                </div>
+                                <div id="preview"></div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
                                     <label for="telefono">Teléfono</label>
-                                    <input type="tel" id="inputTelefono" name="telefono" class="form-control">
+                                    <input type="tel" id="telefono" name="telefono" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label for="password">Contraseña</label>
-                                    <input type="password" id="inputPassword" name="password" class="form-control">
+                                    <input type="password" id="password" name="password" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -129,6 +110,7 @@
                         </div>
                         <div class="box">
                             <span class="alert alert-danger" id="error" style='display:none;'></span>
+                            <span class="alert alert-success" id="success" style='display:none;'></span>
                         </div>
                     </form>
                 </div>
@@ -140,6 +122,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script>
+        //cambia vista
         function change_view(vista = 'show_data') {
             $("#main").find(".view").each(function() {
                 // $(this).addClass("d-none");
@@ -165,8 +148,8 @@
           <td>${e.usr_nombre}</td>
           <td>${e.usr_telefono}</td>
           <td>
-          <a href="#" data-id="${e.id_usr}" class="editar_registro">Editar</a>
-          <a href="#" data-id="${e.id_usr}" class="eliminar_registro">Eliminar</a>
+          <a href="#" data-id="${e.id}" class="editar_registro">Editar</a>
+          <a href="#" data-id="${e.id}" class="eliminar_usuario">Eliminar</a>
           </td>
           </tr>
           `;
@@ -174,18 +157,19 @@
                 $("#list-usuarios tbody").html(template);
             }, "JSON");
         }
-        $(document).ready(function() {
-            consultar();
-            change_view();
-        });
+
+        //form change
         $("#nuevo_registro").click(function() {
             change_view('insert_data');
+            $("#h2-title").text("Insertar Usuario");
         });
+
+        //insertar usuario
         $("#guardar_datos").click(function() {
-            let usr_nombre = $("#inputNombre").val();
-            let usr_correo = $("#inputCorreo").val();
-            let usr_telefono = $("#inputTelefono").val();
-            let usr_password = $("#inputPassword").val();
+            let usr_nombre = $("#nombre").val();
+            let usr_correo = $("#correo").val();
+            let usr_telefono = $("#telefono").val();
+            let usr_password = $("#password").val();
             let obj = {
                 "accion": "insertar_usuario",
                 "nombre": usr_nombre,
@@ -202,6 +186,11 @@
                     return false;
                 }
             });
+            //boton change insertar to edit
+            if ($(this).data("editar") == 1) {
+                obj["accion"] = "editar_usuario";
+                obj["id"] = $(this).data('id');
+            }
             $.post("includes/_funciones.php", obj, function(r) {
                 if (r == 0) {
                     $("#error").html("Campos vacios").fadeIn();
@@ -211,6 +200,87 @@
                 }
             });
         });
+
+
+        //eliminar usuario
+        $("#main").on("click", ".eliminar_usuario", function(e) {
+            e.preventDefault();
+            let confirmacion = confirm('¿Desea eliminar este registro?');
+            if (confirmacion) {
+                let id = $(this).data('id'),
+                    obj = {
+                        "accion": "eliminar_usuario",
+                        "id": id
+                    };
+
+                $.post("includes/_funciones.php", obj, function(r) {
+                    if (r == 0) {
+                        $("#error").html("Error al eliminar").fadeIn();
+                    }
+                    if (r == 1) {
+                        location.reload();
+                    }
+                });
+            }
+        });
+
+        //editar usuario
+        $("#list-usuarios").on("click", ".editar_registro", function(e) {
+            let id = $(this).data('id'),
+                obj = {
+                    "accion": "consultar_usuario",
+                    "id": id
+                };
+            $("#form_data")[0].reset();
+            change_view("insert_data");
+            $("#guardar_datos").text("Editar").data("editar", 1).data('id', id);
+            $.post('includes/_funciones.php', obj, function(r) {
+                $("#nombre").val(r.usr_nombre);
+                $("#correo").val(r.usr_correo);
+                $("#telefono").val(r.usr_telefono);
+                $("#password").val(r.usr_password);
+            }, "JSON");
+            if (r == 0) {
+                $("#error").html("Error al editar").fadeIn();
+            }
+            if (r == 1) {
+                location.reload();
+            }
+
+        });
+
+        $(document).ready(function() {
+            consultar();
+            change_view();
+        });
+
+        /*
+                //funcion foto
+                $("#foto").on("change", function(e) {
+                    let formDatos = new FormData($("#form_data")[0]);
+                    FormDatos.append("accion", "carga_foto");
+                    $.ajax({
+                        url: "includes/_funciones.php"
+                        type: "POST",
+                        data: formDatos,
+                        contentType: false,
+                        processData: false,
+                        success: function(datos) {
+                            let respuesta = JSON.parse(datos);
+                            if (respuesta.status == 0) {
+                                alert("no se cargo la imagen");
+                            }
+                            let template = `
+                                <img src="${respuesta.archivo}" alt="" class="img-fluid" />
+                                `;
+                            $("#ruta").val(respuesta.archivo);
+                            $("#preview").html(template);
+                        }
+                    });
+                });
+        */
+
+        //cancel button
         $("#main").find(".cancelar").click(function() {
             change_view();
             $("#form_data")[0].reset();
@@ -219,6 +289,7 @@
             });
             $("#error").hide();
             $("#success").hide();
+            $("#h2-title").text("Consultar Usuarios");
         });
     </script>
 </body>
