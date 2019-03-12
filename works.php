@@ -193,8 +193,8 @@
           <td>${e.work_description}</td>
           <td>${e.work_img}</td>
           <td>
-          <a href="#" data-id="${e.id}">Editar</a>
-          <a href="#" data-id="${e.id}">Eliminar</a>
+          <a href="#" data-id="${e.id_work}" class="editar_registro">Editar</a>
+          <a href="#" data-id="${e.id_work}" class="eliminar_registro">Eliminar</a>
           </td>
           </tr>
           `;
@@ -227,20 +227,99 @@
                     $(this).addClass("has-error").focus();
                     return false;
                 }
-            });
-            $.post("includes/_funciones.php", obj, function(r) {});
-            if (r == 0) {
-                $("#error").html("Campos vacios").fadeIn();
-            }
-            if (r == 1) {
-                location.reload();
-            }
-        });
-        $("#main").find(".cancelar").click(function() {
+             });
+      if($(this).data("editar") == 1){
+        obj["accion"] = "editar_works";
+        obj["id"] = $(this).data("id");
+        $(this).text("Guardar").data("editar",0);
+        $("#form_data")[0].reset();
+      }
+      $.post("includes/_funciones.php", obj, function(respuesta){
+          alert(respuesta);
+        if (respuesta == "Se inserto el work en la BD ") {
+          change_view();
+          consultar();
+         }
+        if (respuesta == "Se edito el work correctamente") {
             change_view();
-            $("#form_data")[0].reset();
+            consultar();
+          }
+      });
+    });
+      //EDITAR
+                $('#list-works').on("click",".editar_registro", function(e){
+        e.preventDefault();
+        let id = $(this).data('id'),
+            obj = {
+              "accion" : "editar_registrow",
+              "id" : id
+            };
+        $("#form_data")[0].reset();
+        change_view('insert_data');
+        $("#guardar_datos").text("Editar").data("editar",1).data("id",id);
+        $.post("includes/_funciones.php", obj, function(r){
+          $("#pname_work").val(r.pname_work);
+          $("#description_work").val(r.description_work);
+          let template = `
+                    <img src="${r.img_work}" class="img-fluid" />
+                    `;
+                    $("#ruta").val(r.img_work);
+                    $("#preview").html(template);
+          
+        }, "JSON");
+            
+      });
+              /* Eliminar */
+               $("#main").on("click",".eliminar_registro", function(e){
+               e.preventDefault();
+            let confirmacion = confirm('Desea eliminar este registro?');
+            if(confirmacion){
+          let id = $(this).data('id'),
+            obj = {
+              "accion" : "eliminar_works",
+              "id" : id
+            };
+             $.post("includes/_funciones.php", obj, function(respuesta){
+              alert(respuesta);
+              consultar();
+             });
+             
+        }else{
+          alert('El registro no se ha eliminado intente nuevamente');
+        }
         });
-    </script>
+      //FOTO
+      $("#foto").on("change", function (e) {
+      let formDatos = new FormData($("#form_data")[0]);
+      formDatos.append("accion", "carga_foto");
+        $.ajax({
+            url:"includes/_funciones.php",
+            type: "POST",
+            data: formDatos,
+            contentType: false,
+            processData: false,
+            success: function (datos){
+                let respuesta = JSON.parse(datos);
+                if (respuesta.status == 0) {
+                    alert("no se cargo la foto xd");
+                }
+                    let template = `
+                    <img src="${respuesta.archivo}" class="img-fluid" />
+                    `;
+                    $("#ruta").val(respuesta.archivo);
+                    $("#preview").html(template);
+            }
+        });
+      });
+    $("#main").find(".cancelar").click(function(){
+      change_view();
+      $("#form_data")[0].reset();
+      $("#preview").html("");
+      if ($("#guardar_datos").data("editar") == 1) {
+        $("#guardar_datos").text("Guardar").data("editar",0);
+      }
+      
+    });
+  </script>
 </body>
-
-</html> 
+</html>
