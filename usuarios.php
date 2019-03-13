@@ -1,3 +1,9 @@
+<?php
+	session_start();
+	error_reporting(0);
+	$varsesion = $_SESSION['auth'];
+	if (isset($varsesion)){
+?>
 <!doctype html>
 <html lang="en">
 
@@ -37,14 +43,27 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="banner.php">
+                                <span data-feather="file"></span>
+                                Banner
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="works.php">
+                                <span data-feather="file"></span>
+                                Works
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="download.php">
                                 <span data-feather="file"></span>
                                 Download
-                              <li class="nav-item">
-                            <a class="nav-link" href="works.php">
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="footer.php">
                                 <span data-feather="file"></span>
-                               works
-
+                                Footer
                             </a>
                         </li>
                     </ul>
@@ -157,6 +176,10 @@
                 $("#list-usuarios tbody").html(template);
             }, "JSON");
         }
+        $(document).ready(function() {
+            consultar();
+            change_view();
+        });
 
         //form change
         $("#nuevo_registro").click(function() {
@@ -238,7 +261,7 @@
                 $("#nombre").val(r.usr_nombre);
                 $("#correo").val(r.usr_correo);
                 $("#telefono").val(r.usr_telefono);
-                $("#password").val(r.usr_password);
+                $("#password").val(r.usr_pass);
             }, "JSON");
             if (r == 0) {
                 $("#error").html("Error al editar").fadeIn();
@@ -249,10 +272,7 @@
 
         });
 
-        $(document).ready(function() {
-            consultar();
-            change_view();
-        });
+        
 
         /*
                 //funcion foto
@@ -295,3 +315,8 @@
 </body>
 
 </html> 
+<?php
+	}else{
+		header("Location:index.php");
+	}
+?>
